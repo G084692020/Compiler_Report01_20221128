@@ -116,44 +116,40 @@ public class MiniLang {
                             result += ((isDouble ? "小数" : "整数") + ": " + inputToken + ", 記号: +, ");
                             inputToken = "";
                             isDouble = false;
-                        }
-                        else{
+                        } else {
                             return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
-                                + "\"\"";
+                                    + "\"\"";
                         }
                     } else if (input.charAt(i) == '-') {
                         if (inputToken.length() != 0) {
                             result += ((isDouble ? "小数" : "整数") + ": " + inputToken + ", 記号: -, ");
                             inputToken = "";
                             isDouble = false;
-                        }
-                        else{
+                        } else {
                             return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
-                                + "\"\"";
+                                    + "\"\"";
                         }
                     } else if (input.charAt(i) == '*') {
                         if (inputToken.length() != 0) {
                             result += ((isDouble ? "小数" : "整数") + ": " + inputToken + ", 記号: -, ");
                             inputToken = "";
                             isDouble = false;
-                        }
-                        else{
+                        } else {
                             return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
-                                + "\"\"";
+                                    + "\"\"";
                         }
                     } else if (input.charAt(i) == '/') {
                         if (inputToken.length() != 0) {
                             result += ((isDouble ? "小数" : "整数") + ": " + inputToken + ", 記号: -, ");
                             inputToken = "";
                             isDouble = false;
-                        }
-                        else{
+                        } else {
                             return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
-                                + "\"\"";
+                                    + "\"\"";
                         }
                     } else if (input.charAt(i) != ' ') {
                         return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
-                        + "\"\"";
+                                + "\"\"";
                     }
                     // else if (input.charAt(i)==' '){
                     // for(i++; i < input.length(); i++){
