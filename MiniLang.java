@@ -1,72 +1,167 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class MiniLang {
-    String line;
-    int lineIndex = -1;
 
     public static void main(String[] args) {
         new MiniLang();
     }
 
-    /***
-     * 整数の足し算、変数の宣言が出来るミニ言語を実行できる処理系を実装する。
-     * 一行にある演算子は多くて1つまで
-     * 解析したトークン列を出力する
-     * 例
-     * int x
-     * double y
-     * 1 + 2
-     * 2.3 + 9.0
-     * 今回は簡単にするために次の仮定を置く。
-     * 1. 一行で一つのプログラムを書く。一つのプログラムを複数行で書くことは許さない
-     * 2. 改行がプログラムの終了点を表す。つまり、改行がJavaのセミコロンに該当する。
-     */
     MiniLang() {
-        var stdin = new BufferedReader(new InputStreamReader(System.in));
-        // 標準入力を1行ずつ読み出す。
-        System.out.print(">>");
-        try {
-            while ((this.line = stdin.readLine()) != null) {
-                this.lineIndex = -1;
-                // 字句解析でトークンを抽出する
-                ArrayList<ArrayList<String>> tokens = lex();
+        boolean showTokenResults = true;
+        boolean debug = false;
 
-                // 字句解析の結果を出力する
-                System.out.println(tokens);
-
-                // 次のプログラムを読みだす
-                System.out.print(">>");
+        ArrayList<String> stdin = new ArrayList<String>();
+        Scanner scn = new Scanner(System.in);
+        while (true) {
+            System.out.print(">>>>");
+            String token = scn.nextLine();
+            if (debug)
+                System.out.println("input:" + token);
+            if (token.length() != 0) {
+                if (token.contains("exit"))
+                    break;
+                token = returnTokens(token);
+                if (showTokenResults)
+                    System.out.println(token);
+                if (!(token.contains("Syntax Error")))
+                    stdin.add(token);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        scn.close();
     }
 
-    /***
-     * 文字列からトークンを抽出し、その種類と併せて結果を返戻する。
-     * 例
-     * 入力：23 + 2
-     * 出力：(23, 整数）、（+, 記号）、（2, 整数）
-     *
-     * @return
-     */
-    ArrayList<ArrayList<String>> lex() {
-        ArrayList<ArrayList<String>> tokens = new ArrayList<ArrayList<String>>();
+    private static String returnTokens(String input) {
+        String result = "";
+        String inputToken = "";
+        for (int i = 0; i < input.length(); i++) {
+            inputToken += input.charAt(i);
+            if (inputToken.contains("int")) {
+                result += "int: ";
+                for (i++; i < input.length(); i++) {
+                    if (input.charAt(i) >= 'a' && 'z' >= input.charAt(i)) {
+                        result += input.charAt(i);
+                        for (i++; i < input.length(); i++) {
+                            if (input.charAt(i) >= '0' && '9' >= input.charAt(i)
+                                    || input.charAt(i) >= 'a' && 'z' >= input.charAt(i))
+                                result += input.charAt(i);
+                            else if (input.charAt(i) != ' ') {
+                                return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
+                                        + "\"\"";
+                            }
+                        }
+                    } else if (input.charAt(i) != ' ' && input.charAt(i) >= '0' && '9' >= input.charAt(i)) {
+                        return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
+                                + "\"\"";
+                    }
+                }
+            } else if (inputToken.contains("long")) {
+                result += "long: ";
+                for (i++; i < input.length(); i++) {
+                    if (input.charAt(i) >= 'a' && 'z' >= input.charAt(i)) {
+                        result += input.charAt(i);
+                        for (i++; i < input.length(); i++) {
+                            if (input.charAt(i) >= '0' && '9' >= input.charAt(i)
+                                    || input.charAt(i) >= 'a' && 'z' >= input.charAt(i))
+                                result += input.charAt(i);
+                            else if (input.charAt(i) != ' ') {
+                                return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
+                                        + "\"\"";
+                            }
+                        }
+                    } else if (input.charAt(i) != ' ' && input.charAt(i) >= '0' && '9' >= input.charAt(i)) {
+                        return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
+                                + "\"\"";
+                    }
+                }
+            } else if (inputToken.contains("double")) {
+                result += "long: ";
+                for (i++; i < input.length(); i++) {
+                    if (input.charAt(i) >= 'a' && 'z' >= input.charAt(i)) {
+                        result += input.charAt(i);
+                        for (i++; i < input.length(); i++) {
+                            if (input.charAt(i) >= '0' && '9' >= input.charAt(i)
+                                    || input.charAt(i) >= 'a' && 'z' >= input.charAt(i))
+                                result += input.charAt(i);
+                            else if (input.charAt(i) != ' ') {
+                                return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
+                                        + "\"\"";
+                            }
+                        }
+                    } else if (input.charAt(i) != ' ' && input.charAt(i) >= '0' && '9' >= input.charAt(i)) {
+                        return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
+                                + "\"\"";
+                    }
+                }
+            } else if (input.charAt(i) >= '0' && '9' >= input.charAt(i) || input.charAt(i) == '.') {
+                boolean isDouble = false;
+                inputToken = "";
+                // boolean isNumber = false;
+                if (input.charAt(i) == '.') {
+                    inputToken = "0.";
+                    isDouble = true;
+                }
+                for (; i < input.length(); i++) {
+                    if (input.charAt(i) >= '0' && '9' >= input.charAt(i))
+                        inputToken += input.charAt(i);
+                    else if (input.charAt(i) == '.') {
+                        if (isDouble) {
+                            return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
+                                    + "\"\"";
+                        }
+                        isDouble = true;
+                        inputToken += input.charAt(i);
+                    } else if (input.charAt(i) == '+') {
+                        if (inputToken.length() != 0) {
+                            result += ((isDouble ? "小数" : "整数") + ": " + inputToken + ", 記号: +, ");
+                            inputToken = "";
+                            isDouble = false;
+                        }
+                    } else if (input.charAt(i) == '-') {
+                        if (inputToken.length() != 0) {
+                            result += ((isDouble ? "小数" : "整数") + ": " + inputToken + ", 記号: -, ");
+                            inputToken = "";
+                            isDouble = false;
+                        }
+                    } else if (input.charAt(i) == '*') {
+                        if (inputToken.length() != 0) {
+                            result += ((isDouble ? "小数" : "整数") + ": " + inputToken + ", 記号: -, ");
+                            inputToken = "";
+                            isDouble = false;
+                        }
+                    } else if (input.charAt(i) == '/') {
+                        if (inputToken.length() != 0) {
+                            result += ((isDouble ? "小数" : "整数") + ": " + inputToken + ", 記号: -, ");
+                            inputToken = "";
+                            isDouble = false;
+                        }
+                    } else if (input.charAt(i) != ' ') {
+                        return "Syntax Error at: " + input.substring(0, i) + "\"\"" + input.substring(i)
+                                + "\"\"";
+                    }
+                    // else if (input.charAt(i)==' '){
+                    // for(i++; i < input.length(); i++){
+                    // if(input.charAt(i)!=' '){
+                    // return "Syntax Error at: " + input.substring(0, i) + "\"\"" +
+                    // input.substring(i)
+                    // + "\"\"";
+                    // }
+                    // }
+                    // break;
+                    // }
+                }
+                if (inputToken.matches("0.")) {
+                    return "Syntax Error";
+                }
+                if (inputToken.length() != 0) {
+                    result += ((isDouble ? "小数" : "整数") + ": " + inputToken);
+                    inputToken = "";
+                    isDouble = false;
+                }
 
-        return tokens;
-    }
-
-    char nextChar() {
-        if (this.lineIndex + 1 == this.line.length()) {
-            return Character.MIN_VALUE;
-        } else {
-            this.lineIndex++;
-            char[] c = this.line.toCharArray();
-            return c[this.lineIndex];
+            }
         }
-    }
 
+        return result;
+    }
 }
